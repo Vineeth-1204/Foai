@@ -1,0 +1,22 @@
+[
+  {
+    "rule_id": "RULE_CLEAN_BASELINE",
+    "name": "Clean Baseline Indicator Profile",
+    "premises": [
+      "valid_url_syntax",
+      "hostname_is_domain_name",
+      "no_userinfo_delimiter",
+      "scheme_is_https",
+      "path_has_no_sensitive_keyword",
+      "has_standard_port",
+      "normal_subdomain_depth",
+      "has_standard_encoding",
+      "no_open_redirect_parameter",
+      "no_double_extension",
+      "no_brand_typosquatting"
+    ],
+    "conclusion": "zero_suspicious_indicators_present",
+    "severity": "NONE",
+    "explanation": "All baseline security indicators evaluated positive and clean with zero suspicious structural characteristics detected by the local rule set."
+  }
+]

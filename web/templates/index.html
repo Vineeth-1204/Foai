@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explainable URL & Link Risk Screening</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Section A: Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="title-group">
+                    <span class="academic-badge">Academic Project | Classical Symbolic AI</span>
+                    <h1 id="app-title">Explainable URL & QR Risk Screening</h1>
+                    <p class="subtitle" id="app-subtitle">Offline Classical AI-based security analysis</p>
+                </div>
+                <div class="system-specs">
+                    <div class="spec-tag"><span class="dot green"></span> 100% Offline / Zero Network</div>
+                    <a href="/presentation" class="spec-tag spec-link">📊 Viva Slides Deck</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Section B: Input Area (URL or QR Upload) -->
+        <section class="card input-section" aria-label="Input Area">
+            <div class="input-mode-tabs">
+                <button type="button" class="tab-btn active" id="tab-url-mode">Direct URL Input</button>
+                <button type="button" class="tab-btn" id="tab-qr-mode">Offline QR Image Upload</button>
+            </div>
+
+            <!-- Mode 1: Manual URL Form -->
+            <form id="analyze-form" class="url-form">
+                <label for="url-input" class="input-label">Enter Target URL for Offline Screening</label>
+                <div class="input-row">
+                    <input 
+                        type="text" 
+                        id="url-input" 
+                        name="url" 
+                        placeholder="https://example.com" 
+                        autocomplete="off" 
+                        spellcheck="false"
+                    />
+                    <button type="submit" id="analyze-btn" class="btn primary-btn">
+                        <span class="btn-text">Analyze URL</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Mode 2: QR Upload Form -->
+            <form id="qr-form" class="qr-form hidden">
+                <label for="qr-file-input" class="input-label">Upload QR Code Image (Offline Local OpenCV Decoding)</label>
+                <div class="input-row">
+                    <input 
+                        type="file" 
+                        id="qr-file-input" 
+                        name="qr_image" 
+                        accept="image/png,image/jpeg,image/webp,image/bmp,image/tiff"
+                    />
+                    <button type="submit" id="analyze-qr-btn" class="btn primary-btn">
+                        <span class="btn-text">Decode &amp; Analyze QR</span>
+                    </button>
+                </div>
+            </form>
+
+            <div id="validation-msg" class="validation-message hidden" role="alert"></div>
+
+            <!-- Decoded QR Text Banner -->
+            <div id="qr-decoded-banner" class="qr-decoded-banner hidden">
+                <span class="qr-decoded-label">Decoded QR Content:</span>
+                <span class="qr-decoded-val font-mono" id="qr-decoded-text"></span>
+            </div>
+
+            <div class="presets-container">
+                <span class="presets-label">Demonstration Presets:</span>
+                <div class="preset-buttons">
+                    <button type="button" class="preset-btn" data-url="https://example.com">Legitimate Baseline</button>
+                    <button type="button" class="preset-btn" data-url="https://192.168.1.10/login">Raw IP + Login</button>
+                    <button type="button" class="preset-btn" data-url="https://google.com@attacker.com/login">Userinfo Masking</button>
+                    <button type="button" class="preset-btn" data-url="http://example.com:8080/browse">Non-Std Port + HTTP</button>
+                    <button type="button" class="preset-btn" data-url="https://g00gle.com/login">A* Typosquatting Phish</button>
+                    <button type="button" class="preset-btn" data-url="http://paypa1.com/index">A* Insecure Brand</button>
+                    <button type="button" class="preset-btn" data-url="https://example.com/invoice.pdf.exe">Double Extension</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading State Indicator -->
+        <div id="loading-spinner" class="loading-state hidden">
+            <div class="spinner"></div>
+            <span>Evaluating Knowledge Base with Forward Chaining...</span>
+        </div>
+
+        <!-- Output Sections Container -->
+        <main id="results-area" class="results-container hidden">
+
+            <!-- Section: Plain-Language Summary (Simple Terms) -->
+            <section class="card simple-summary-card safe" id="simple-summary-section" aria-label="Plain-Language Summary">
+                <div class="simple-summary-header">
+                    <div class="summary-status-icon" id="summary-icon">🛡️</div>
+                    <div class="summary-text-box">
+                        <div class="summary-eyebrow-row">
+                            <span class="summary-eyebrow">Quick Security Status</span>
+                            <span class="summary-tag" id="summary-tag">Clean &amp; Legitimate</span>
+                        </div>
+                        <h2 class="summary-headline" id="summary-headline">No Suspicious Activity Found</h2>
+                        <p class="summary-body" id="summary-body">
+                            No deceptive patterns, brand impersonation, or credential harvesting indicators were found.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="summary-signals-grid" id="summary-signals-grid">
+                    <div class="signal-item">
+                        <span class="signal-label">Connection</span>
+                        <span class="signal-value" id="signal-transport-val">Secure (HTTPS)</span>
+                    </div>
+                    <div class="signal-item">
+                        <span class="signal-label">Destination Identity</span>
+                        <span class="signal-value" id="signal-identity-val">Legitimate Domain</span>
+                    </div>
+                    <div class="signal-item">
+                        <span class="signal-label">Credential Safety</span>
+                        <span class="signal-value" id="signal-intent-val">Safe / Benign</span>
+                    </div>
+                </div>
+
+                <div class="summary-action-banner" id="summary-action-banner">
+                    <span class="action-icon">💡</span>
+                    <span class="action-label">Recommendation:</span>
+                    <span class="action-text" id="summary-action-text">Safe to visit for standard web browsing.</span>
+                </div>
+            </section>
+
+            <!-- Section C: Verdict Card -->
+            <section class="card verdict-card" id="verdict-section">
+                <div class="verdict-banner" id="verdict-banner">
+                    <div class="verdict-header">
+                        <span class="card-label">Categorical Security Verdict</span>
+                        <div class="verdict-title-row">
+                            <span class="verdict-badge" id="verdict-badge">SAFE</span>
+                            <span class="severity-badge" id="severity-badge">Severity: NONE</span>
+                        </div>
+                    </div>
+                    <div class="verdict-explanation" id="verdict-explanation"></div>
+                </div>
+
+                <!-- Parsed URL Lexical Breakdown -->
+                <div class="parsed-tokens-block">
+                    <h3>RFC 3986 Lexical Decomposition (Offline)</h3>
+                    <div class="tokens-grid" id="tokens-grid"></div>
+                </div>
+            </section>
+
+            <!-- Section H: SAFE Disclaimer (Conditionally Shown for SAFE Verdict) -->
+            <section class="card safe-disclaimer-card hidden" id="safe-disclaimer-section" role="note">
+                <div class="disclaimer-icon">&#x2139;&#xFE0F;</div>
+                <div class="disclaimer-content">
+                    <h4>Local Offline Screening Notice</h4>
+                    <p id="safe-disclaimer-text"></p>
+                </div>
+            </section>
+
+            <!-- Section G: A* Typosquatting Evidence (Shown only if A* fired) -->
+            <section class="card astar-card hidden" id="astar-section">
+                <div class="section-title-row">
+                    <h3>A* Heuristic Search: Brand Similarity Evidence</h3>
+                    <span class="algo-tag">Secondary AI Algorithm (f(n) = g(n) + h(n))</span>
+                </div>
+                <div class="astar-content-grid">
+                    <div class="astar-metric">
+                        <span class="metric-label">Observed Label</span>
+                        <span class="metric-value font-mono" id="astar-source"></span>
+                    </div>
+                    <div class="astar-metric">
+                        <span class="metric-label">Matched Lexicon Brand</span>
+                        <span class="metric-value font-mono" id="astar-target"></span>
+                    </div>
+                    <div class="astar-metric">
+                        <span class="metric-label">Discrete Edit Cost</span>
+                        <span class="metric-value font-mono" id="astar-cost"></span>
+                    </div>
+                    <div class="astar-metric">
+                        <span class="metric-label">Search Space Threshold</span>
+                        <span class="metric-value font-mono">&le; 2 edits (Integer)</span>
+                    </div>
+                </div>
+                <div class="astar-operations-block">
+                    <span class="ops-title">Optimal Transformation Path:</span>
+                    <ul class="ops-list" id="astar-operations-list"></ul>
+                </div>
+                <p class="astar-footnote">
+                    *Deterministic integer edit distance using an admissible length-gap heuristic. Contains zero learned statistical weights or probabilities.
+                </p>
+            </section>
+
+            <!-- Section D: Risk Factors -->
+            <section class="card risk-factors-card" id="risk-factors-section">
+                <h3>Identified Risk Factors</h3>
+                <div id="risk-factors-list" class="risk-factors-list"></div>
+            </section>
+
+            <!-- Section E: Triggered Rules -->
+            <section class="card triggered-rules-card" id="rules-section">
+                <h3>Knowledge Base Rules Fired</h3>
+                <p class="rules-subtitle">Definite Horn clauses satisfied by base URL percept facts</p>
+                <div id="triggered-rules-list" class="rules-table-container"></div>
+            </section>
+
+            <!-- Section F: Proof Tree (Deduction DAG) -->
+            <section class="card proof-tree-card" id="proof-tree-section">
+                <div class="proof-header-row">
+                    <div>
+                        <h3>Explainable Proof Tree (Deduction Graph)</h3>
+                        <p class="proof-subtitle">Recursive logical provenance derived by Forward Chaining (PL-FC-Entails)</p>
+                    </div>
+                    <div class="proof-view-toggle">
+                        <button type="button" id="toggle-text-proof" class="btn small-btn">Toggle Raw Proof Text</button>
+                    </div>
+                </div>
+
+                <!-- Interactive Visual Tree -->
+                <div id="interactive-proof-tree" class="interactive-tree-container"></div>
+
+                <!-- Text Tree Block (Collapsible) -->
+                <pre id="raw-proof-tree" class="raw-proof-block hidden"></pre>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>Artificial Intelligence Project &bull; College Syllabus Alignment: Intelligent Agents, Problem-Solving & Heuristic Search (A*), Knowledge-Based Agents & Propositional Horn Logic (PL-FC-Entails), Explainable AI (XAI).</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

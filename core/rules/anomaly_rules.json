@@ -1,0 +1,97 @@
+[
+  {
+    "rule_id": "RULE_IP_AND_SENSITIVE_KEYWORD",
+    "name": "Credential Harvesting Pattern via Direct IP",
+    "premises": [
+      "hostname_is_ip_address",
+      "path_contains_sensitive_keyword"
+    ],
+    "conclusion": "pattern_credential_harvesting_on_ip",
+    "severity": "CRITICAL",
+    "explanation": "The URL targets a direct IP address rather than a registered domain name while accessing sensitive authentication endpoints."
+  },
+  {
+    "rule_id": "RULE_USERINFO_DELIMITER",
+    "name": "Credential Masking via Authority Userinfo",
+    "premises": [
+      "has_userinfo_delimiter"
+    ],
+    "conclusion": "pattern_credential_masking",
+    "severity": "CRITICAL",
+    "explanation": "The URL authority contains an '@' delimiter, which masks the destination domain by impersonating credentials or trusted prefix domains."
+  },
+  {
+    "rule_id": "RULE_TYPOSQUATTING_INSECURE_HTTP",
+    "name": "Insecure Brand Impersonation",
+    "premises": [
+      "brand_typosquatting_detected",
+      "scheme_is_http"
+    ],
+    "conclusion": "pattern_insecure_brand_impersonation",
+    "severity": "HIGH",
+    "explanation": "The hostname closely resembles a protected brand name and communicates over unencrypted HTTP transport."
+  },
+  {
+    "rule_id": "RULE_TYPOSQUATTING_SENSITIVE_KEYWORD",
+    "name": "Targeted Brand Phishing",
+    "premises": [
+      "brand_typosquatting_detected",
+      "path_contains_sensitive_keyword"
+    ],
+    "conclusion": "pattern_targeted_brand_phishing",
+    "severity": "CRITICAL",
+    "explanation": "The hostname impersonates a recognized brand and targets sensitive authentication or verification paths."
+  },
+  {
+    "rule_id": "RULE_REDIRECT_EXCESSIVE_SUBDOMAINS",
+    "name": "Obfuscated Redirect Chain",
+    "premises": [
+      "has_open_redirect_parameter",
+      "excessive_subdomain_depth"
+    ],
+    "conclusion": "pattern_obfuscated_redirect_chain",
+    "severity": "HIGH",
+    "explanation": "The URL contains open redirect parameters hosted on deep multi-level subdomains, frequently used to disguise malicious target destinations."
+  },
+  {
+    "rule_id": "RULE_DOUBLE_EXTENSION",
+    "name": "Executable Masquerading via Double Extension",
+    "premises": [
+      "has_double_extension"
+    ],
+    "conclusion": "pattern_executable_masquerading",
+    "severity": "CRITICAL",
+    "explanation": "The pathname ends with an executable or script extension following a document or media extension, characteristic of disguised malware payloads."
+  },
+  {
+    "rule_id": "RULE_ABNORMAL_SCHEME",
+    "name": "Abnormal or Non-Web URI Scheme",
+    "premises": [
+      "scheme_is_abnormal"
+    ],
+    "conclusion": "pattern_abnormal_scheme",
+    "severity": "CRITICAL",
+    "explanation": "The URI uses an abnormal or non-standard protocol (such as javascript:, data:, or file:) capable of local script execution or unauthorized context access."
+  },
+  {
+    "rule_id": "RULE_HTTP_INSECURE_TRANSPORT",
+    "name": "Insecure Transport on Unauthenticated Path",
+    "premises": [
+      "scheme_is_http",
+      "path_has_no_sensitive_keyword"
+    ],
+    "conclusion": "pattern_insecure_transport_only",
+    "severity": "LOW",
+    "explanation": "The URL uses unencrypted HTTP communication without sensitive authentication keywords, leaving traffic exposed to eavesdropping or tampering."
+  },
+  {
+    "rule_id": "RULE_NON_STANDARD_PORT",
+    "name": "Unconventional Port Endpoint",
+    "premises": [
+      "has_non_standard_port"
+    ],
+    "conclusion": "pattern_unconventional_endpoint",
+    "severity": "MEDIUM",
+    "explanation": "The URL connects to an unconventional network port rather than standard web ports (80 or 443)."
+  }
+]
